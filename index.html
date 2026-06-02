@@ -36,32 +36,6 @@
             <svg class="w-4 h-4 text-zinc-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.77 0"/></svg>
         );
 
-        // Re-scaled and centered vector paths to completely fill up the frame area
-        const OrionLogoIcon = () => (
-            <svg class="w-9 h-9 text-zinc-200 group-hover:text-cyan-400 transition-colors drop-shadow-[0_0_8px_rgba(34,211,238,0.55)]" viewBox="25 8 55 60" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                {/* Constellation Skeleton Lines */}
-                <path d="M45 32 L55 33 L53 55 L47 55 Z" stroke-width="1.2" opacity="0.5" /> 
-                <path d="M45 32 L36 63" stroke-width="1.2" opacity="0.5" /> 
-                <path d="M55 33 L60 62" stroke-width="1.2" opacity="0.5" /> 
-                
-                {/* Silhouette Structure Features (Club and Bow) */}
-                <path d="M45 32 L32 20 L40 12" stroke-width="1.8" /> 
-                <path d="M55 33 L68 31 L64 26 M68 31 L64 36" stroke-width="1.8" /> 
-                <path d="M68 14 C78 25, 78 37, 68 48" stroke-width="1.8" /> 
-                
-                {/* Belt Nodes */}
-                <circle cx="47.5" cy="45" r="2" fill="currentColor" />
-                <circle cx="50" cy="45" r="2" fill="currentColor" />
-                <circle cx="52.5" cy="45" r="2" fill="currentColor" />
-
-                {/* Primary Constellation Star Clusters */}
-                <circle cx="45" cy="32" r="3" fill="#22d3ee" /> 
-                <circle cx="55" cy="33" r="2.5" fill="currentColor" />    
-                <circle cx="36" cy="63" r="3" fill="#22d3ee" /> 
-                <circle cx="60" cy="62" r="2.5" fill="currentColor" />    
-            </svg>
-        );
-
         // Helper component for Draggable items
         function Draggable({ children, initialX, initialY, handleClass, disabled, style = {} }) {
             const [pos, setPos] = React.useState({ x: initialX, y: initialY });
@@ -306,17 +280,25 @@
                     <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
                         <div class="h-18 px-6 rounded-2xl bg-zinc-950/40 border border-zinc-800/40 backdrop-blur-xl flex items-center gap-5 shadow-2xl">
                             
-                            {/* START MENU TRIGGER BUTTON (ENLARGED FOR ARTWORK SCALE) */}
+                            {/* START MENU PHOTO CONTAINER */}
                             <button 
                                 onClick={(e) => { e.stopPropagation(); setIsStartOpen(!isStartOpen); }}
-                                class={`w-13 h-13 rounded-full transition-all duration-150 cursor-pointer border relative group flex items-center justify-center bg-zinc-900/20 hover:bg-zinc-900/70
+                                class={`w-12 h-12 rounded-xl transition-all duration-150 cursor-pointer border relative group flex items-center justify-center overflow-hidden bg-zinc-950 p-1 hover:border-cyan-500/80
                                     ${isStartOpen 
-                                        ? 'border-zinc-100 scale-105 shadow-md bg-zinc-900/60' 
-                                        : 'border-zinc-800/80 hover:border-zinc-400'
+                                        ? 'border-cyan-400 scale-105 shadow-[0_0_15px_rgba(34,211,238,0.35)]' 
+                                        : 'border-zinc-800'
                                     }`}
                             >
-                                <OrionLogoIcon />
-                                <span class={`absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-zinc-400 transition-all ${isStartOpen ? 'scale-100 bg-zinc-100' : 'scale-0'}`} />
+                                <img 
+                                    src="orion.png" 
+                                    alt="Orion Logo"
+                                    class="w-full h-full object-contain filter invert opacity-80 group-hover:opacity-100 transition-all mix-blend-screen"
+                                    onError={(e) => {
+                                        e.target.style.display = 'none';
+                                        e.target.parentNode.innerHTML = `<span class="text-xs font-bold text-zinc-400">O</span>`;
+                                    }}
+                                />
+                                <span class={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-cyan-400 transition-all ${isStartOpen ? 'scale-100' : 'scale-0'}`} />
                             </button>
 
                             <span class="text-zinc-800 font-light text-xl select-none">|</span>
