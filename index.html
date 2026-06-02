@@ -36,6 +36,32 @@
             <svg class="w-4 h-4 text-zinc-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.77 0"/></svg>
         );
 
+        // Native layout constructor for the Orion Constellation geometry without requiring external images
+        const NativeOrionLogo = () => (
+            <div class="relative w-8 h-8 flex items-center justify-center scale-95 select-none pointer-events-none">
+                {/* Core Belt Coordinates */}
+                <div class="absolute w-1 h-1 rounded-full bg-cyan-400 shadow-[0_0_4px_#22d3ee] top-[48%] left-[40%]" />
+                <div class="absolute w-1 h-1 rounded-full bg-cyan-400 shadow-[0_0_4px_#22d3ee] top-[48%] left-[49%]" />
+                <div class="absolute w-1 h-1 rounded-full bg-cyan-400 shadow-[0_0_4px_#22d3ee] top-[48%] left-[58%]" />
+                
+                {/* Shoulder Clusters */}
+                <div class="absolute w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_6px_#fff] top-[24%] left-[32%]" />
+                <div class="absolute w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#22d3ee] top-[26%] left-[64%]" />
+                
+                {/* Feet Nodes */}
+                <div class="absolute w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#22d3ee] bottom-[18%] left-[26%]" />
+                <div class="absolute w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_6px_#fff] bottom-[16%] left-[68%]" />
+                
+                {/* Structural Grid Connectors */}
+                <svg class="absolute inset-0 w-full h-full text-zinc-600/40" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1">
+                    <line x1="11" y1="8" x2="21" y2="9" />
+                    <line x1="11" y1="8" x2="9" y2="26" />
+                    <line x1="21" y1="9" x2="22" y2="27" />
+                    <line x1="9" y1="26" x2="22" y2="27" opacity="0.3" />
+                </svg>
+            </div>
+        );
+
         // Helper component for Draggable items
         function Draggable({ children, initialX, initialY, handleClass, disabled, style = {} }) {
             const [pos, setPos] = React.useState({ x: initialX, y: initialY });
@@ -280,24 +306,16 @@
                     <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
                         <div class="h-18 px-6 rounded-2xl bg-zinc-950/40 border border-zinc-800/40 backdrop-blur-xl flex items-center gap-5 shadow-2xl">
                             
-                            {/* START MENU PHOTO CONTAINER */}
+                            {/* NATIVE VECTOR SYSTEM RUNTIME TRIGGER */}
                             <button 
                                 onClick={(e) => { e.stopPropagation(); setIsStartOpen(!isStartOpen); }}
-                                class={`w-12 h-12 rounded-xl transition-all duration-150 cursor-pointer border relative group flex items-center justify-center overflow-hidden bg-zinc-950 p-1 hover:border-cyan-500/80
+                                class={`w-12 h-12 rounded-xl transition-all duration-150 cursor-pointer border relative group flex items-center justify-center bg-zinc-900/30 hover:bg-zinc-900/70
                                     ${isStartOpen 
-                                        ? 'border-cyan-400 scale-105 shadow-[0_0_15px_rgba(34,211,238,0.35)]' 
-                                        : 'border-zinc-800'
+                                        ? 'border-cyan-500 scale-105 shadow-[0_0_15px_rgba(34,211,238,0.25)] bg-zinc-900/90' 
+                                        : 'border-zinc-800 hover:border-zinc-500'
                                     }`}
                             >
-                                <img 
-                                    src="orion.png" 
-                                    alt="Orion Logo"
-                                    class="w-full h-full object-contain filter invert opacity-80 group-hover:opacity-100 transition-all mix-blend-screen"
-                                    onError={(e) => {
-                                        e.target.style.display = 'none';
-                                        e.target.parentNode.innerHTML = `<span class="text-xs font-bold text-zinc-400">O</span>`;
-                                    }}
-                                />
+                                <NativeOrionLogo />
                                 <span class={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-cyan-400 transition-all ${isStartOpen ? 'scale-100' : 'scale-0'}`} />
                             </button>
 
