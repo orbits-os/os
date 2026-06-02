@@ -36,29 +36,29 @@
             <svg class="w-4 h-4 text-zinc-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.77 0"/></svg>
         );
 
-        // Perfectly scalable vector match for the Orion Hunter silhouette lines
+        // Re-scaled and centered vector paths to completely fill up the frame area
         const OrionLogoIcon = () => (
-            <svg class="w-6 h-6 text-zinc-300 group-hover:text-cyan-400 transition-colors drop-shadow-[0_0_6px_rgba(34,211,238,0.3)]" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                {/* Constellation Star-to-Star Skeleton lines */}
-                <path d="M45 32 L55 33 L53 55 L47 55 Z" stroke-width="1.5" opacity="0.6" /> {/* Torso */}
-                <path d="M45 32 L36 63" stroke-width="1.5" opacity="0.6" /> {/* Left Leg */}
-                <path d="M55 33 L60 62" stroke-width="1.5" opacity="0.6" /> {/* Right Leg */}
+            <svg class="w-9 h-9 text-zinc-200 group-hover:text-cyan-400 transition-colors drop-shadow-[0_0_8px_rgba(34,211,238,0.55)]" viewBox="25 8 55 60" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                {/* Constellation Skeleton Lines */}
+                <path d="M45 32 L55 33 L53 55 L47 55 Z" stroke-width="1.2" opacity="0.5" /> 
+                <path d="M45 32 L36 63" stroke-width="1.2" opacity="0.5" /> 
+                <path d="M55 33 L60 62" stroke-width="1.2" opacity="0.5" /> 
                 
-                {/* Outer Hunter Silhouette Geometry (Club and Bow nodes) */}
-                <path d="M45 32 L32 20 L40 12" stroke-width="2" /> {/* Club Arm */}
-                <path d="M55 33 L68 31 L64 26 M68 31 L64 36" stroke-width="2" /> {/* Bow Arm */}
-                <path d="M68 14 C78 25, 78 37, 68 48" stroke-width="2" /> {/* Bow Curve */}
+                {/* Silhouette Structure Features (Club and Bow) */}
+                <path d="M45 32 L32 20 L40 12" stroke-width="1.8" /> 
+                <path d="M55 33 L68 31 L64 26 M68 31 L64 36" stroke-width="1.8" /> 
+                <path d="M68 14 C78 25, 78 37, 68 48" stroke-width="1.8" /> 
                 
-                {/* Belt Stars Nodes */}
-                <circle cx="47.5" cy="45" r="2.5" fill="currentColor" class="animate-pulse" />
-                <circle cx="50" cy="45" r="2.5" fill="currentColor" class="animate-pulse" />
-                <circle cx="52.5" cy="45" r="2.5" fill="currentColor" class="animate-pulse" />
+                {/* Belt Nodes */}
+                <circle cx="47.5" cy="45" r="2" fill="currentColor" />
+                <circle cx="50" cy="45" r="2" fill="currentColor" />
+                <circle cx="52.5" cy="45" r="2" fill="currentColor" />
 
-                {/* Major Star Cluster Nodes */}
-                <circle cx="45" cy="32" r="3.5" fill="#38bdf8" /> {/* Betelgeuse */}
-                <circle cx="55" cy="33" r="3" fill="currentColor" />    {/* Bellatrix */}
-                <circle cx="36" cy="63" r="3.5" fill="#38bdf8" /> {/* Rigel */}
-                <circle cx="60" cy="62" r="3" fill="currentColor" />    {/* Saiph */}
+                {/* Primary Constellation Star Clusters */}
+                <circle cx="45" cy="32" r="3" fill="#22d3ee" /> 
+                <circle cx="55" cy="33" r="2.5" fill="currentColor" />    
+                <circle cx="36" cy="63" r="3" fill="#22d3ee" /> 
+                <circle cx="60" cy="62" r="2.5" fill="currentColor" />    
             </svg>
         );
 
@@ -267,7 +267,7 @@
                     {/* START MENU POPUP PANEL */}
                     {isStartOpen && (
                         <div 
-                            class="absolute bottom-22 left-1/2 -translate-x-1/2 md:left-8 md:translate-x-0 w-72 bg-zinc-950/95 border border-zinc-800/80 backdrop-blur-2xl rounded-2xl shadow-2xl z-50 p-4 flex flex-col overflow-hidden"
+                            class="absolute bottom-24 left-1/2 -translate-x-1/2 md:left-8 md:translate-x-0 w-72 bg-zinc-950/95 border border-zinc-800/80 backdrop-blur-2xl rounded-2xl shadow-2xl z-50 p-4 flex flex-col overflow-hidden"
                             onClick={(e) => e.stopPropagation()}
                         >
                             <div class="px-2 pb-3 mb-2 border-b border-zinc-900 flex flex-col">
@@ -302,24 +302,24 @@
                         </div>
                     )}
 
-                    {/* BOTTOM DOCK (ENLARGED & COMPLETELY UNMOVABLE) */}
+                    {/* BOTTOM DOCK (ENLARGED & STATIC) */}
                     <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
-                        <div class="h-16 px-5 rounded-2xl bg-zinc-950/40 border border-zinc-800/40 backdrop-blur-xl flex items-center gap-5 shadow-2xl">
+                        <div class="h-18 px-6 rounded-2xl bg-zinc-950/40 border border-zinc-800/40 backdrop-blur-xl flex items-center gap-5 shadow-2xl">
                             
-                            {/* START MENU VECTOR ICON TRIGGER BUTTON */}
+                            {/* START MENU TRIGGER BUTTON (ENLARGED FOR ARTWORK SCALE) */}
                             <button 
                                 onClick={(e) => { e.stopPropagation(); setIsStartOpen(!isStartOpen); }}
-                                class={`w-11 h-11 rounded-full transition-all duration-150 cursor-pointer border relative group flex items-center justify-center bg-zinc-900/30 hover:bg-zinc-900/80
+                                class={`w-13 h-13 rounded-full transition-all duration-150 cursor-pointer border relative group flex items-center justify-center bg-zinc-900/20 hover:bg-zinc-900/70
                                     ${isStartOpen 
-                                        ? 'border-zinc-100 scale-105 shadow-md bg-zinc-900' 
-                                        : 'border-zinc-800/80 hover:border-zinc-500'
+                                        ? 'border-zinc-100 scale-105 shadow-md bg-zinc-900/60' 
+                                        : 'border-zinc-800/80 hover:border-zinc-400'
                                     }`}
                             >
                                 <OrionLogoIcon />
-                                <span class={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-zinc-400 transition-all ${isStartOpen ? 'scale-100 bg-zinc-100' : 'scale-0'}`} />
+                                <span class={`absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-zinc-400 transition-all ${isStartOpen ? 'scale-100 bg-zinc-100' : 'scale-0'}`} />
                             </button>
 
-                            <span class="text-zinc-800 font-light text-base select-none">|</span>
+                            <span class="text-zinc-800 font-light text-xl select-none">|</span>
 
                             {/* SYSTEM DOCK ICON NODES */}
                             {apps.map((app) => {
@@ -347,7 +347,7 @@
                         </div>
                     </div>
 
-                    {/* FOOTER SUBTEXT BAR */}
+                    {/* FOOTER BAR */}
                     <footer class="absolute bottom-0 left-0 right-0 h-7 px-6 bg-zinc-950/10 border-t border-zinc-900/20 flex items-center justify-between text-[10px] text-zinc-500 z-40">
                         <span>Workspace: Primary</span>
                         <span>orionOS</span>
