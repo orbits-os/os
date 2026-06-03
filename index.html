@@ -20,7 +20,7 @@
 
     <script type="text/babel">
         // Minimalistic Desktop Icons
-        const SystemIcon = () => (
+        const HubIcon = () => (
             <svg class="w-5.5 h-5.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
         );
         const MediaIcon = () => (
@@ -28,9 +28,6 @@
         );
         const StorageIcon = () => (
             <svg class="w-5.5 h-5.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
-        );
-        const SettingsIcon = () => (
-            <svg class="w-5.5 h-5.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         );
         const PowerIcon = () => (
             <svg class="w-4 h-4 text-zinc-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.77 0"/></svg>
@@ -50,6 +47,7 @@
             </svg>
         );
 
+        // Draggable Component Window Wrapper
         function Draggable({ children, pos, setPos, handleClass, disabled }) {
             const draggingRef = React.useRef(false);
             const relRef = React.useRef({ x: 0, y: 0 });
@@ -95,11 +93,7 @@
             };
 
             return (
-                <div 
-                    onPointerDown={onPointerDown} 
-                    style={style} 
-                    class={`z-30 ${disabled ? 'w-full h-full' : draggingRef.current ? '' : 'transition-[left,top] duration-300 ease-in-out'}`}
-                >
+                <div onPointerDown={onPointerDown} style={style} class={`z-30 ${disabled ? 'w-full h-full' : draggingRef.current ? '' : 'transition-[left,top] duration-300 ease-in-out'}`}>
                     {children}
                 </div>
             );
@@ -108,23 +102,35 @@
         function OrionOS() {
             const [time, setTime] = React.useState('');
             const [fps, setFps] = React.useState(60);
-            const [activeWindow, setActiveWindow] = React.useState('dashboard');
+            const [activeWindow, setActiveWindow] = React.useState('hub');
             const [isMaximized, setIsMaximized] = React.useState(false);
             const [isVisible, setIsVisible] = React.useState(true);
             const [isAnimating, setIsAnimating] = React.useState(false);
             const [isStartOpen, setIsStartOpen] = React.useState(false);
             const [windowPos, setWindowPos] = React.useState({ x: 160, y: 96 });
-            
-            // Central System Wallpapers Database
-            const systemWallpapers = [
-                { id: 'neon-aurora', name: 'Neon Aurora', class: 'bg-gradient-to-tr from-zinc-950 via-slate-900 to-emerald-950/40' },
-                { id: 'orion-deep', name: 'Orion Deep Space', class: 'bg-gradient-to-b from-zinc-950 via-purple-950/20 to-black' },
-                { id: 'cyber-sunset', name: 'Cyber Sunset', class: 'bg-gradient-to-br from-zinc-950 via-rose-950/20 to-zinc-900' },
-                { id: 'quantum-grid', name: 'Quantum Cyan', class: 'bg-gradient-to-tl from-zinc-950 via-zinc-900 to-cyan-950/30' }
+            const [hubTab, setHubTab] = React.useState('dashboard');
+
+            // 🌟 Linked Directly to your github repository root stream
+            const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/orion-os/os/main/walpapers/";
+
+            // Active Wallpaper File Registry mapped to your GitHub repository files structure
+            const githubWallpapers = [
+                { id: 'wall-orion', name: 'Orion Default Theme', file: 'orion.png' },
+                { id: 'wall-cosmic', name: 'Cosmic Shift', file: 'cosmic.png' },
+                { id: 'wall-matrix', name: 'Cyber Matrix Grid', file: 'matrix.png' },
+                { id: 'wall-minimal', name: 'Sleek Obsidian', file: 'minimal.png' }
             ];
-            
-            const [currentWallpaper, setCurrentWallpaper] = React.useState(systemWallpapers[0]);
-            const [settingsTab, setSettingsTab] = React.useState('wallpaper');
+
+            const [selectedWallpaper, setSelectedWallpaper] = React.useState(githubWallpapers[0]);
+
+            // Construct background styling using the GitHub raw asset endpoints
+            const backgroundStyle = {
+                backgroundImage: `url('${GITHUB_RAW_BASE}${selectedWallpaper.file}')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundColor: '#09090b',
+                transition: 'background-image 0.8s ease-in-out'
+            };
 
             React.useEffect(() => {
                 const updateTime = () => {
@@ -156,10 +162,9 @@
             }, []);
 
             const apps = [
-                { id: 'dashboard', label: 'Dashboard', icon: SystemIcon, defaultX: 32, defaultY: 80 },
+                { id: 'hub', label: 'System Hub', icon: HubIcon, defaultX: 32, defaultY: 80 },
                 { id: 'library', label: 'Media Deck', icon: MediaIcon, defaultX: 32, defaultY: 180 },
                 { id: 'files', label: 'Storage', icon: StorageIcon, defaultX: 32, defaultY: 280 },
-                { id: 'settings', label: 'Settings', icon: SettingsIcon, defaultX: 32, defaultY: 380 },
             ];
 
             const handleWindowClose = () => {
@@ -184,16 +189,17 @@
                 }
             };
 
-            const handleAppClick = (appId) => {
+            const handleAppClick = (appId, explicitTab = null) => {
                 if (isAnimating) return;
+                if (explicitTab) setHubTab(explicitTab);
 
-                if (activeWindow === appId) {
+                if (activeWindow === appId && !explicitTab) {
                     setIsAnimating(true);
                     setIsVisible(!isVisible);
                     setTimeout(() => setIsAnimating(false), 300);
                 } else {
                     setIsAnimating(true);
-                    if (isVisible) {
+                    if (isVisible && activeWindow !== appId) {
                         setIsVisible(false);
                         setTimeout(() => {
                             setActiveWindow(appId);
@@ -203,8 +209,8 @@
                         }, 200);
                     } else {
                         setActiveWindow(appId);
+                        if (activeWindow === appId) setIsVisible(true);
                         setIsMaximized(false);
-                        setIsVisible(true);
                         setTimeout(() => setIsAnimating(false), 300);
                     }
                 }
@@ -212,13 +218,10 @@
             };
 
             return (
-                <div class={`relative w-full h-screen text-zinc-100 overflow-hidden select-none transition-all duration-700 ${currentWallpaper.class}`}>
+                <div style={backgroundStyle} class="relative w-full h-screen text-zinc-100 overflow-hidden select-none">
                     
-                    {/* AMBIENT BACKGROUND GLOW */}
-                    <div class="absolute inset-0 z-0 pointer-events-none">
-                        <div class="absolute top-[10%] left-[20%] w-[50%] h-[50%] bg-cyan-500/5 rounded-full blur-[160px]" />
-                        <div class="absolute bottom-[10%] right-[10%] w-[40%] h-[40%] bg-purple-500/5 rounded-full blur-[140px]" />
-                    </div>
+                    {/* BACKDROP SHADOW FILTER FOR EXTRA INTERFACE LEGIBILITY */}
+                    <div class="absolute inset-0 bg-black/15 z-0 pointer-events-none backdrop-brightness-[0.95]" />
 
                     {/* SYSTEM TOP BAR */}
                     <header class="absolute top-0 left-0 right-0 h-10 z-50 flex items-center justify-between px-6 bg-zinc-950/40 border-b border-zinc-800/20 backdrop-blur-md text-xs font-medium text-zinc-400">
@@ -235,19 +238,15 @@
                         </div>
                     </header>
 
-                    {/* WORKSPACE */}
+                    {/* DESKTOP DESK WORKSPACE */}
                     <main class="relative w-full h-full z-10" onClick={() => setIsStartOpen(false)}>
                         
-                        {/* SHORTCUT ICONS */}
+                        {/* STATIC ICON SHORTCUT MAP */}
                         {apps.map((app) => {
                             const AppIcon = app.icon;
                             const isOpen = activeWindow === app.id && isVisible;
                             return (
-                                <div 
-                                    key={app.id} 
-                                    style={{ position: 'absolute', left: `${app.defaultX}px`, top: `${app.defaultY}px` }}
-                                    class="z-20"
-                                >
+                                <div key={app.id} style={{ position: 'absolute', left: `${app.defaultX}px`, top: `${app.defaultY}px` }} class="z-20">
                                     <button 
                                         onClick={(e) => { e.stopPropagation(); handleAppClick(app.id); }}
                                         class="group flex flex-col items-center justify-center w-20 h-20 rounded-xl border border-transparent hover:border-zinc-700/30 hover:bg-zinc-950/30 transition-all text-center cursor-pointer"
@@ -267,7 +266,7 @@
                             );
                         })}
 
-                        {/* DESKTOP WINDOW LAYERS */}
+                        {/* WINDOW VIEW LAYERS */}
                         {activeWindow && (
                             <div class={`w-full h-full absolute inset-0 z-30 ${isVisible ? "" : "pointer-events-none"}`}>
                                 <Draggable pos={windowPos} setPos={setWindowPos} handleClass="window-drag-bar" disabled={isMaximized}>
@@ -275,105 +274,105 @@
                                         style={
                                             isMaximized 
                                                 ? { position: 'fixed', left: '16px', top: '56px', width: 'calc(100vw - 32px)', height: 'calc(100vh - 132px)' } 
-                                                : { width: 'calc(100vw - 220px)', height: 'calc(100vh - 240px)', minWidth: '450px', minHeight: '340px' }
+                                                : { width: 'calc(100vw - 220px)', height: 'calc(100vh - 240px)', minWidth: '520px', minHeight: '380px' }
                                         }
-                                        class={`bg-zinc-950/85 border border-zinc-800/80 backdrop-blur-xl rounded-xl shadow-2xl flex flex-col overflow-hidden ease-in-out origin-center
+                                        class={`bg-zinc-950/92 border border-zinc-800/80 backdrop-blur-xl rounded-xl shadow-2xl flex flex-col overflow-hidden ease-in-out origin-center
                                             transition-[opacity,transform,blur,width,height,left,top,position] duration-300
                                             ${isVisible ? 'opacity-100 scale-100 blur-none' : 'opacity-0 scale-95 blur-sm'}`}
                                         onClick={(e) => e.stopPropagation()}
                                     >
-                                        {/* Header Titlebar */}
+                                        {/* Drag Bar */}
                                         <div class="window-drag-bar h-12 bg-zinc-900/40 border-b border-zinc-800/30 flex items-center px-5 cursor-grab active:cursor-grabbing select-none relative shrink-0">
                                             <div class="flex items-center gap-2 group/lights z-10">
-                                                <button onClick={handleWindowClose} class="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e] flex items-center justify-center cursor-pointer relative">
-                                                    <span class="text-[9px] font-bold text-[#4c0002] opacity-0 group-hover/lights:opacity-100 transition-opacity absolute pb-0.5">✕</span>
-                                                </button>
-                                                <button onClick={handleWindowMinimize} class="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123] flex items-center justify-center cursor-pointer relative">
-                                                    <span class="text-[11px] font-bold text-[#5c3e00] opacity-0 group-hover/lights:opacity-100 transition-opacity absolute pb-1.5">_</span>
-                                                </button>
-                                                <button onClick={() => setIsMaximized(!isMaximized)} class="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aaa2c] flex items-center justify-center cursor-pointer relative">
-                                                    <span class="text-[7px] font-bold text-[#004d05] opacity-0 group-hover/lights:opacity-100 transition-opacity absolute pb-0.5">{isMaximized ? '⌥' : '⤢'}</span>
-                                                </button>
+                                                <button onClick={handleWindowClose} class="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e] flex items-center justify-center cursor-pointer relative"><span class="text-[9px] font-bold text-[#4c0002] opacity-0 group-hover/lights:opacity-100 transition-opacity absolute pb-0.5">✕</span></button>
+                                                <button onClick={handleWindowMinimize} class="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123] flex items-center justify-center cursor-pointer relative"><span class="text-[11px] font-bold text-[#5c3e00] opacity-0 group-hover/lights:opacity-100 transition-opacity absolute pb-1.5">_</span></button>
+                                                <button onClick={() => setIsMaximized(!isMaximized)} class="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aaa2c] flex items-center justify-center cursor-pointer relative"><span class="text-[7px] font-bold text-[#004d05] opacity-0 group-hover/lights:opacity-100 transition-opacity absolute pb-0.5">{isMaximized ? '⌥' : '⤢'}</span></button>
                                             </div>
                                             <div class="absolute inset-x-0 text-center pointer-events-none">
-                                                <span class="text-xs font-semibold tracking-wide text-zinc-400 capitalize">{activeWindow === 'files' ? 'Storage Explorer' : activeWindow}</span>
+                                                <span class="text-xs font-semibold tracking-wide text-zinc-400 capitalize">{activeWindow === 'hub' ? 'System Hub' : 'Storage Explorer'}</span>
                                             </div>
                                         </div>
 
-                                        {/* Main Interface Content Frame */}
+                                        {/* Content View Frame */}
                                         <div class="flex-1 overflow-y-auto cursor-default">
                                             
-                                            {/* DASHBOARD CARD */}
-                                            {activeWindow === 'dashboard' && (
-                                                <div class="p-6 space-y-6 max-w-4xl">
-                                                    <div>
-                                                        <h2 class="text-lg font-bold tracking-tight text-white">System Environment</h2>
-                                                        <p class="text-xs text-zinc-400 mt-1">Real-time status indexes from the active user environment.</p>
+                                            {/* UNIFIED HUB PACKET (MERGED SETTINGS + DASHBOARD) */}
+                                            {activeWindow === 'hub' && (
+                                                <div class="flex h-full min-h-[320px]">
+                                                    {/* Navigation Side Layout */}
+                                                    <div class="w-44 border-r border-zinc-800/40 bg-zinc-900/20 p-3 space-y-1 shrink-0 select-none">
+                                                        <div class="text-[9px] font-bold text-zinc-600 px-3 uppercase tracking-wider mb-1">Status Environment</div>
+                                                        <button onClick={() => setHubTab('dashboard')} class={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer transition-colors ${hubTab === 'dashboard' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-zinc-200'}`}>Dashboard Metrics</button>
+                                                        
+                                                        <div class="text-[9px] font-bold text-zinc-600 px-3 uppercase tracking-wider mt-4 mb-1">Configurations</div>
+                                                        <button onClick={() => setHubTab('wallpaper')} class={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer transition-colors ${hubTab === 'wallpaper' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-zinc-200'}`}>Wallpaper Engine</button>
+                                                        <button onClick={() => setHubTab('system')} class={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer transition-colors ${hubTab === 'system' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-zinc-200'}`}>System Properties</button>
                                                     </div>
-                                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-                                                        <div class="p-4 rounded-lg bg-zinc-900/40 border border-zinc-800/50">
-                                                            <div class="text-[10px] text-zinc-500 font-medium uppercase tracking-wider">Engine Performance</div>
-                                                            <div class="text-2xl font-bold text-emerald-400 mt-1 font-mono">{fps} <span class="text-xs text-zinc-500 font-normal">FPS</span></div>
-                                                        </div>
-                                                        <div class="p-4 rounded-lg bg-zinc-900/40 border border-zinc-800/50">
-                                                            <div class="text-[10px] text-zinc-500 font-medium uppercase tracking-wider">Active Workspace</div>
-                                                            <div class="text-base font-semibold text-zinc-200 mt-2">orion_node_01</div>
-                                                        </div>
-                                                        <div class="p-4 rounded-lg bg-zinc-900/40 border border-zinc-800/50">
-                                                            <div class="text-[10px] text-zinc-500 font-medium uppercase tracking-wider">Environment Sync</div>
-                                                            <div class="text-base font-semibold text-cyan-400 mt-2 flex items-center gap-1.5">
-                                                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" /> Verified
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            )}
 
-                                            {/* SETTINGS UTILITY */}
-                                            {activeWindow === 'settings' && (
-                                                <div class="flex h-full min-h-[280px]">
-                                                    <div class="w-40 border-r border-zinc-800/40 bg-zinc-900/20 p-3 space-y-1 shrink-0">
-                                                        <button 
-                                                            onClick={() => setSettingsTab('wallpaper')}
-                                                            class={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer transition-colors ${settingsTab === 'wallpaper' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-zinc-200'}`}
-                                                        >
-                                                            Wallpapers
-                                                        </button>
-                                                        <button 
-                                                            onClick={() => setSettingsTab('system')}
-                                                            class={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer transition-colors ${settingsTab === 'system' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-zinc-200'}`}
-                                                        >
-                                                            System Properties
-                                                        </button>
-                                                    </div>
-                                                    <div class="flex-1 p-6">
-                                                        {settingsTab === 'wallpaper' ? (
-                                                            <div>
-                                                                <h3 class="text-sm font-bold text-white mb-1">Desktop Wallpaper</h3>
-                                                                <p class="text-[11px] text-zinc-400 mb-4">Choose an active environmental matrix layer from your system files.</p>
-                                                                <div class="grid grid-cols-2 gap-3">
-                                                                    {systemWallpapers.map((wp) => (
-                                                                        <button 
-                                                                            key={wp.id}
-                                                                            onClick={() => setCurrentWallpaper(wp)}
-                                                                            class={`p-3 rounded-lg text-left border relative overflow-hidden group cursor-pointer transition-all ${wp.id === currentWallpaper.id ? 'border-cyan-400 bg-zinc-900/60' : 'border-zinc-800 bg-zinc-900/20 hover:border-zinc-700'}`}
-                                                                        >
-                                                                            <div class={`h-12 w-full rounded mb-2 ${wp.class}`} />
-                                                                            <span class="text-xs font-medium text-zinc-300 block">{wp.name}</span>
-                                                                            {wp.id === currentWallpaper.id && (
-                                                                                <span class="absolute top-2 right-2 text-[10px] bg-cyan-950 border border-cyan-800 text-cyan-400 font-medium px-1.5 py-0.5 rounded">Active</span>
-                                                                            )}
-                                                                        </button>
-                                                                    ))}
+                                                    {/* Core Interface Workspace Router */}
+                                                    <div class="flex-1 p-6 overflow-y-auto">
+                                                        {hubTab === 'dashboard' && (
+                                                            <div class="space-y-6">
+                                                                <div>
+                                                                    <h2 class="text-base font-bold text-white">System Diagnostics</h2>
+                                                                    <p class="text-[11px] text-zinc-400 mt-0.5">Real-time telemetries running inside the active user space instance.</p>
+                                                                </div>
+                                                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                                    <div class="p-4 rounded-xl bg-zinc-900/30 border border-zinc-800/40 shadow-inner">
+                                                                        <div class="text-[10px] text-zinc-500 font-medium uppercase tracking-wider">Engine Performance</div>
+                                                                        <div class="text-2xl font-bold text-emerald-400 mt-1 font-mono">{fps} <span class="text-xs text-zinc-500 font-normal font-sans">FPS</span></div>
+                                                                    </div>
+                                                                    <div class="p-4 rounded-xl bg-zinc-900/30 border border-zinc-800/40 shadow-inner">
+                                                                        <div class="text-[10px] text-zinc-500 font-medium uppercase tracking-wider">Active Workspace Layer</div>
+                                                                        <div class="text-xs font-semibold text-zinc-200 mt-2.5 truncate flex items-center gap-1.5">
+                                                                            <span class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse" /> {selectedWallpaper.name}
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        ) : (
+                                                        )}
+
+                                                        {hubTab === 'wallpaper' && (
+                                                            <div>
+                                                                <div class="mb-4">
+                                                                    <h3 class="text-sm font-bold text-white">GitHub Wallpaper Workspace</h3>
+                                                                    <p class="text-[11px] text-zinc-400 mt-0.5">Streaming live asset vectors from <code class="text-cyan-400 font-mono text-[10px]">orion-os/os/walpapers/</code> node pipeline.</p>
+                                                                </div>
+                                                                <div class="grid grid-cols-2 gap-3">
+                                                                    {githubWallpapers.map((wp) => {
+                                                                        const isCurrent = wp.id === selectedWallpaper.id;
+                                                                        const imgRawUrl = `${GITHUB_RAW_BASE}${wp.file}`;
+                                                                        return (
+                                                                            <button 
+                                                                                key={wp.id}
+                                                                                onClick={() => setSelectedWallpaper(wp)}
+                                                                                class={`p-2.5 rounded-xl text-left border relative overflow-hidden bg-zinc-900/20 group cursor-pointer transition-all ${isCurrent ? 'border-cyan-400 bg-zinc-900/60 shadow-lg' : 'border-zinc-800/80 hover:border-zinc-700'}`}
+                                                                            >
+                                                                                <div 
+                                                                                    style={{ backgroundImage: `url('${imgRawUrl}')`, backgroundSize: 'cover', backgroundPosition: 'center' }} 
+                                                                                    class="h-14 w-full rounded-lg mb-2 bg-zinc-950 border border-zinc-900 relative flex items-center justify-center text-center text-[9px] text-zinc-500 font-mono"
+                                                                                >
+                                                                                    <span class="bg-black/40 px-1 py-0.5 rounded backdrop-blur-xs">orion_stream</span>
+                                                                                </div>
+                                                                                <span class="text-xs font-medium text-zinc-300 block truncate">{wp.name}</span>
+                                                                                <span class="text-[9px] text-zinc-500 font-mono block mt-0.5 truncate">{wp.file}</span>
+                                                                                {isCurrent && (
+                                                                                    <span class="absolute top-2 right-2 text-[9px] bg-cyan-950 border border-cyan-800 text-cyan-400 font-medium px-1.5 py-0.5 rounded animate-fade-in">Active</span>
+                                                                                )}
+                                                                            </button>
+                                                                        );
+                                                                    })}
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+                                                        {hubTab === 'system' && (
                                                             <div class="space-y-4">
-                                                                <h3 class="text-sm font-bold text-white">System Configurations</h3>
+                                                                <h3 class="text-sm font-bold text-white">System Architectures</h3>
                                                                 <div class="space-y-2 text-xs text-zinc-400">
-                                                                    <div class="flex justify-between py-1 border-b border-zinc-900"><span>Build Version</span><span class="font-mono text-zinc-300">v1.4.2-STABLE</span></div>
-                                                                    <div class="flex justify-between py-1 border-b border-zinc-900"><span>Renderer Engine</span><span class="text-zinc-300">Tailwind Graphics v4</span></div>
-                                                                    <div class="flex justify-between py-1 border-b border-zinc-900"><span>Kernel Host</span><span class="font-mono text-zinc-300">orion_core_arm64</span></div>
+                                                                    <div class="flex justify-between py-1.5 border-b border-zinc-900"><span>Build Sequence Version</span><span class="font-mono text-zinc-300">v2.1.0-RAW_FLOW</span></div>
+                                                                    <div class="flex justify-between py-1.5 border-b border-zinc-900"><span>Display Server Layer</span><span class="text-zinc-300">GitHub Content Stream Engine</span></div>
+                                                                    <div class="flex justify-between py-1.5 border-b border-zinc-900"><span>Repository Origin</span><span class="font-mono text-zinc-300 text-cyan-400">orion-os/os/main</span></div>
                                                                 </div>
                                                             </div>
                                                         )}
@@ -381,36 +380,39 @@
                                                 </div>
                                             )}
 
-                                            {/* STORAGE CHANNELS (FILES COMPONENT FIXED) */}
+                                            {/* REAL STORAGE EXPLORER CHANNELS */}
                                             {activeWindow === 'files' && (
                                                 <div class="p-6 space-y-6">
                                                     <div>
                                                         <h3 class="text-sm font-bold text-white flex items-center gap-1.5">
                                                             <svg class="w-4 h-4 text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
-                                                            System Filesystem / wallpapers /
+                                                            GitHub Core Filesystem / walpapers /
                                                         </h3>
-                                                        <p class="text-[11px] text-zinc-400 mt-0.5">Click any configuration template below to seamlessly apply it as your desktop theme.</p>
+                                                        <p class="text-[11px] text-zinc-400 mt-0.5">Linked directory layout. Click any file configuration item inside the cloud frame below to switch theme configuration immediately.</p>
                                                     </div>
 
                                                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                                        {systemWallpapers.map((wp) => {
-                                                            const isApplied = wp.id === currentWallpaper.id;
+                                                        {githubWallpapers.map((wp) => {
+                                                            const isApplied = wp.id === selectedWallpaper.id;
                                                             return (
                                                                 <div 
                                                                     key={wp.id} 
-                                                                    onClick={() => setCurrentWallpaper(wp)}
+                                                                    onClick={() => { handleAppClick('hub', 'wallpaper'); }}
                                                                     class={`p-2.5 rounded-xl bg-zinc-900/30 border transition-all text-center cursor-pointer group relative
                                                                         ${isApplied ? 'border-cyan-500 bg-zinc-900/60' : 'border-zinc-800/60 hover:border-zinc-700'}`}
                                                                 >
-                                                                    <div class={`h-16 w-full rounded-lg mb-2 relative flex items-center justify-center overflow-hidden shadow-inner ${wp.class}`}>
-                                                                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                                            <span class="text-[10px] font-semibold text-white bg-zinc-950/90 px-2 py-1 rounded border border-zinc-700 shadow-md">
-                                                                                {isApplied ? 'Active' : 'Apply Wall'}
+                                                                    <div 
+                                                                        style={{ backgroundImage: `url('${GITHUB_RAW_BASE}${wp.file}')`, backgroundSize: 'cover', backgroundPosition: 'center' }} 
+                                                                        class="h-16 w-full rounded-lg mb-2 relative bg-zinc-950 border border-zinc-900/40 flex items-center justify-center overflow-hidden"
+                                                                    >
+                                                                        <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                                            <span class="text-[10px] font-semibold text-white bg-zinc-900/90 px-2 py-1 rounded border border-zinc-700 shadow-md">
+                                                                                {isApplied ? 'Active' : 'Deploy'}
                                                                             </span>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="text-[11px] font-medium text-zinc-300 truncate">{wp.name}.wall</div>
-                                                                    <div class="text-[9px] text-zinc-500 font-mono mt-0.5">Configuration Matrix</div>
+                                                                    <div class="text-[11px] font-medium text-zinc-300 truncate">{wp.file}</div>
+                                                                    <div class="text-[9px] text-zinc-500 font-mono mt-0.5">Asset Payload</div>
                                                                 </div>
                                                             );
                                                         })}
@@ -421,8 +423,8 @@
                                             {/* MEDIA DECK SANDBOX CONTAINER */}
                                             {activeWindow === 'library' && (
                                                 <div class="h-full flex flex-col items-center justify-center text-center py-12">
-                                                    <h3 class="text-xs font-semibold text-zinc-300 capitalize">{activeWindow} Sandbox Ready</h3>
-                                                    <p class="text-[11px] text-zinc-500 max-w-xs mt-1">Module frame securely parsed onto the primary viewport stack sequence.</p>
+                                                    <h3 class="text-xs font-semibold text-zinc-300 capitalize">Media Deck Frame Sandbox</h3>
+                                                    <p class="text-[11px] text-zinc-500 max-w-xs mt-1">Primary secure pipeline frame securely initialized onto active user desk workspace stack configuration.</p>
                                                 </div>
                                             )}
 
@@ -433,99 +435,63 @@
                         )}
                     </main>
 
-                    {/* APPS START DRAWER MENU */}
+                    {/* START LAUNCH DRAWER MENU */}
                     {isStartOpen && (
-                        <div 
-                            class="absolute bottom-24 left-1/2 -translate-x-1/2 md:left-8 md:translate-x-0 w-72 bg-zinc-950/95 border border-zinc-800/80 backdrop-blur-2xl rounded-2xl shadow-2xl z-50 p-4 flex flex-col overflow-hidden"
-                            onClick={(e) => e.stopPropagation()}
-                        >
+                        <div class="absolute bottom-24 left-1/2 -translate-x-1/2 md:left-8 md:translate-x-0 w-72 bg-zinc-950/95 border border-zinc-800/80 backdrop-blur-2xl rounded-2xl shadow-2xl z-50 p-4 flex flex-col overflow-hidden animate-fade-in" onClick={(e) => e.stopPropagation()}>
                             <div class="px-2 pb-3 mb-2 border-b border-zinc-900 flex flex-col">
-                                <span class="text-xs font-semibold text-zinc-200">orionOS Workspace</span>
-                                <span class="text-[10px] text-zinc-500 mt-0.5">Local User Node</span>
+                                <span class="text-xs font-semibold text-zinc-200">orionOS Environment</span>
+                                <span class="text-[10px] text-zinc-500 mt-0.5">Local User Host Node</span>
                             </div>
-                            
                             <div class="flex-1 space-y-1">
                                 <div class="text-[9px] font-bold text-zinc-600 px-2 uppercase tracking-wider mb-1">Applications</div>
                                 {apps.map((app) => {
                                     const AppIcon = app.icon;
                                     return (
-                                        <button 
-                                            key={app.id} 
-                                            onClick={() => handleAppClick(app.id)}
-                                            class="w-full flex items-center gap-3 px-2.5 py-2 rounded-xl text-xs text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900/60 transition-colors text-left cursor-pointer"
-                                        >
+                                        <button key={app.id} onClick={() => handleAppClick(app.id)} class="w-full flex items-center gap-3 px-2.5 py-2 rounded-xl text-xs text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900/60 transition-colors text-left cursor-pointer">
                                             <div class="text-zinc-500 group-hover:text-zinc-300"><AppIcon /></div>
                                             <span class="font-medium">{app.label}</span>
                                         </button>
                                     );
                                 })}
                             </div>
-
                             <div class="mt-4 pt-2 border-t border-zinc-900 flex items-center justify-between px-2 text-[11px] text-zinc-500">
-                                <span class="text-[10px]">v1.4.2-Stable</span>
-                                <button onClick={() => { setIsStartOpen(false); setIsVisible(false); }} class="flex items-center gap-1.5 hover:text-rose-400 transition-colors cursor-pointer">
-                                    <PowerIcon />
-                                    <span>Log Out</span>
-                                </button>
+                                <span class="text-[10px]">v2.1.0-Stable</span>
+                                <button onClick={() => { setIsStartOpen(false); setIsVisible(false); }} class="flex items-center gap-1.5 hover:text-rose-400 transition-colors cursor-pointer"><PowerIcon /><span>Log Out</span></button>
                             </div>
                         </div>
                     )}
 
-                    {/* SYSTEM TASKBAR LAYOUT */}
+                    {/* INTERACTIVE SYSTEM TASKBAR DOCK LAYOUT */}
                     <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
                         <div class="h-18 px-6 rounded-2xl bg-zinc-950/40 border border-zinc-800/40 backdrop-blur-xl flex items-center gap-5 shadow-2xl">
                             
-                            {/* App Launcher Button */}
-                            <button 
-                                onClick={(e) => { e.stopPropagation(); setIsStartOpen(!isStartOpen); }}
-                                class={`w-11 h-11 rounded-xl transition-all duration-300 cursor-pointer border relative group flex items-center justify-center bg-zinc-900/30 hover:bg-zinc-900/70
-                                    ${isStartOpen 
-                                        ? 'border-cyan-400 scale-105 shadow-[0_0_12px_rgba(34,211,238,0.25)] bg-zinc-900/90' 
-                                        : 'border-zinc-800/80 hover:border-zinc-500'
-                                    }`}
-                            >
-                                <OrbitIcon />
-                                <span class={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-cyan-400 transition-all duration-300 ${isStartOpen ? 'scale-100' : 'scale-0'}`} />
-                            </button>
-
+                            {/* App Launcher Trigger */}
+                            <button onClick={(e) => { e.stopPropagation(); setIsStartOpen(!isStartOpen); }} class={`w-11 h-11 rounded-xl transition-all duration-300 cursor-pointer border relative group flex items-center justify-center bg-zinc-900/30 hover:bg-zinc-900/70 ${isStartOpen ? 'border-cyan-400 scale-105 shadow-[0_0_12px_rgba(34,211,238,0.25)] bg-zinc-900/90' : 'border-zinc-800/80 hover:border-zinc-500'}`}><OrbitIcon /><span class={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-cyan-400 transition-all duration-300 ${isStartOpen ? 'scale-100' : 'scale-0'}`} /></button>
                             <span class="text-zinc-800 font-light text-xl select-none">|</span>
 
-                            {/* Dock Items Mapping */}
+                            {/* Main App Icons */}
                             {apps.map((app) => {
                                 const AppIcon = app.icon;
                                 const isCurrentActive = activeWindow === app.id;
                                 const isCurrentOpen = isCurrentActive && isVisible;
-                                
                                 return (
                                     <button
                                         key={app.id}
                                         onClick={(e) => { e.stopPropagation(); handleAppClick(app.id); }}
                                         class={`p-3 rounded-xl transition-all duration-300 relative cursor-pointer group transform active:scale-95
-                                            ${isCurrentOpen 
-                                                ? 'bg-zinc-100 text-zinc-950 shadow-md scale-105' 
-                                                : isCurrentActive
-                                                ? 'text-zinc-400 border border-zinc-800/50 bg-zinc-900/40 shadow-inner scale-100'
-                                                : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/40'
-                                            }`}
+                                            ${isCurrentOpen ? 'bg-zinc-100 text-zinc-950 shadow-md scale-105' : isCurrentActive ? 'text-zinc-400 border border-zinc-800/50 bg-zinc-900/40 shadow-inner scale-100' : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/40'}`}
                                     >
-                                        <div class={isCurrentOpen ? 'text-zinc-950' : ''}>
-                                            <AppIcon />
-                                        </div>
+                                        <div class={isCurrentOpen ? 'text-zinc-950' : ''}><AppIcon /></div>
                                         <span class={`absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full transition-all duration-300
-                                            ${isCurrentOpen ? 'bg-zinc-950 scale-100' : isCurrentActive ? 'bg-zinc-500 scale-100' : 'bg-zinc-400 scale-0 group-hover:scale-100'}`} 
-                                        />
+                                            ${isCurrentOpen ? 'bg-zinc-950 scale-100' : isCurrentActive ? 'bg-zinc-500 scale-100' : 'bg-cyan-400 scale-0 group-hover:scale-100'}`} />
                                     </button>
                                 );
                             })}
                         </div>
                     </div>
 
-                    {/* SYSTEM FOOTER BAR */}
-                    <footer class="absolute bottom-0 left-0 right-0 h-7 px-6 bg-zinc-950/10 border-t border-zinc-900/20 flex items-center justify-between text-[10px] text-zinc-500 z-40">
-                        <span>Workspace: Primary</span>
-                        <span>orionOS</span>
-                    </footer>
-
+                    {/* FOOTER METRICS BAR */}
+                    <footer class="absolute bottom-0 left-0 right-0 h-7 px-6 bg-zinc-950/10 border-t border-zinc-900/20 flex items-center justify-between text-[10px] text-zinc-500 z-40"><span>Workspace Pipeline: Core</span><span>orionOS Node Alpha</span></footer>
                 </div>
             );
         }
