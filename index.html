@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>orionOS Desktop</title>
+    <title>orbit.os</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
@@ -51,14 +51,14 @@
             </svg>
         );
 
-        // Helper component for Draggable items with fluid positioning transitions
-        function Draggable({ children, initialX, initialY, handleClass, disabled, isMinimizing, style = {} }) {
+        // Draggable container with uniform, linear transition dynamics
+        function Draggable({ children, initialX, initialY, handleClass, disabled, style = {} }) {
             const [pos, setPos] = React.useState({ x: initialX, y: initialY });
             const draggingRef = React.useRef(false);
             const relRef = React.useRef({ x: 0, y: 0 });
 
             const onPointerDown = (e) => {
-                if (disabled || isMinimizing) return;
+                if (disabled) return;
                 if (handleClass && !e.target.closest(`.${handleClass}`)) return;
                 
                 draggingRef.current = true;
@@ -88,10 +88,9 @@
                     window.removeEventListener('pointermove', onPointerMove);
                     window.removeEventListener('pointerup', onPointerUp);
                 };
-            }, [pos, disabled, isMinimizing]);
+            }, [pos, disabled]);
 
-            // Disable custom positioning during maximize or minimize states to let CSS layout engines animate natively
-            const dragStyle = (disabled || isMinimizing) ? style : {
+            const dragStyle = disabled ? style : {
                 ...style,
                 position: 'absolute',
                 left: `${pos.x}px`,
@@ -99,7 +98,7 @@
             };
 
             return (
-                <div onPointerDown={onPointerDown} style={dragStyle} class={draggingRef.current ? "" : "transition-all duration-300 ease-out"}>
+                <div onPointerDown={onPointerDown} style={dragStyle} class={draggingRef.current ? "" : "transition-all duration-300 ease-in-out"}>
                     {children}
                 </div>
             );
@@ -109,7 +108,7 @@
             const [time, setTime] = React.useState('');
             const [activeWindow, setActiveWindow] = React.useState('dashboard');
             const [isMaximized, setIsMaximized] = React.useState(false);
-            const [isMinimized, setIsMinimized] = React.useState(false);
+            const [isClosing, setIsClosing] = React.useState(false);
             const [isStartOpen, setIsStartOpen] = React.useState(false);
 
             React.useEffect(() => {
@@ -129,17 +128,20 @@
                 { id: 'analytics', label: 'Analytics', icon: AnalyticsIcon, defaultX: 32, defaultY: 380 },
             ];
 
+            // Smooth close handler shared between standard X and - buttons
+            const handleWindowClose = () => {
+                setIsClosing(true);
+                setTimeout(() => {
+                    setActiveWindow(null);
+                    setIsClosing(false);
+                }, 300); // Matches transition timeline
+            };
+
             const handleAppClick = (appId) => {
-                if (activeWindow === appId && isMinimized) {
-                    // Bring back up if minimized
-                    setIsMinimized(false);
-                } else if (activeWindow === appId && !isMinimized) {
-                    // Minimize toggle if active app clicked again
-                    setIsMinimized(true);
+                if (activeWindow === appId) {
+                    handleWindowClose();
                 } else {
-                    // Switch apps cleanly
                     setActiveWindow(appId);
-                    setIsMinimized(false);
                 }
                 setIsStartOpen(false);
             };
@@ -172,7 +174,7 @@
                         {/* SHORTCUT ICONS */}
                         {apps.map((app) => {
                             const AppIcon = app.icon;
-                            const isOpen = activeWindow === app.id && !isMinimized;
+                            const isOpen = activeWindow === app.id;
                             return (
                                 <Draggable key={app.id} initialX={app.defaultX} initialY={app.defaultY}>
                                     <button 
@@ -194,42 +196,38 @@
                             );
                         })}
 
-                        {/* SMOOTH ANIMATED WINDOW SEQUENCE */}
+                        {/* HIGHLY-RESPONSIVE VIEWPORT BOUND APP WINDOW */}
                         {activeWindow && (
                             <Draggable 
                                 initialX={160} 
                                 initialY={96} 
                                 handleClass="window-drag-bar" 
                                 disabled={isMaximized}
-                                isMinimizing={isMinimized}
                                 style={
-                                    isMinimized 
-                                        ? { fixed: 'fixed', left: '50%', bottom: '20px', transform: 'translate(-50%, 40px) scale(0.15)', opacity: 0, pointerEvents: 'none' } 
-                                        : isMaximized 
-                                        ? {} 
+                                    isMaximized 
+                                        ? { width: 'calc(100vw - 48px)', height: 'calc(100vh - 180px)', left: '24px', top: '56px' } 
                                         : { width: 'calc(100vw - 220px)', height: 'calc(100vh - 240px)', minWidth: '320px', minHeight: '240px' }
                                 }
                             >
                                 <div 
-                                    class={`bg-zinc-950/80 border border-zinc-800/80 backdrop-blur-xl rounded-xl shadow-2xl flex flex-col overflow-hidden h-full w-full z-30 transform transition-all duration-300 ease-out origin-bottom
-                                        ${isMaximized && !isMinimized ? 'fixed inset-x-6 top-14 bottom-28' : ''}
-                                        ${isMinimized ? 'blur-md' : 'opacity-100 scale-100'}`}
+                                    class={`bg-zinc-950/80 border border-zinc-800/80 backdrop-blur-xl rounded-xl shadow-2xl flex flex-col overflow-hidden h-full w-full z-30 transition-all duration-300 ease-in-out origin-center
+                                        ${isClosing ? 'opacity-0 scale-95 blur-sm' : 'opacity-100 scale-100'}`}
                                     onClick={(e) => e.stopPropagation()}
                                 >
-                                    {/* Window Title Bar */}
+                                    {/* Window Header Navigation Strip */}
                                     <div class="window-drag-bar h-12 bg-zinc-900/40 border-b border-zinc-800/30 flex items-center px-5 cursor-grab active:cursor-grabbing select-none relative">
                                         
-                                        {/* Traffic Lights Control Interface */}
+                                        {/* Core Operational Control Nodes */}
                                         <div class="flex items-center gap-2 group/lights z-10">
-                                            {/* Close Button */}
-                                            <button onClick={() => setActiveWindow(null)} class="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e] flex items-center justify-center cursor-pointer relative">
+                                            {/* Standard Close Trigger */}
+                                            <button onClick={handleWindowClose} class="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e] flex items-center justify-center cursor-pointer relative">
                                                 <span class="text-[9px] font-bold text-[#4c0002] opacity-0 group-hover/lights:opacity-100 transition-opacity absolute pb-0.5">✕</span>
                                             </button>
-                                            {/* Minimize Button (-) */}
-                                            <button onClick={() => setIsMinimized(true)} class="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123] flex items-center justify-center cursor-pointer relative">
+                                            {/* Modified Minimize Trigger -> Runs the Close Sequence Animation */}
+                                            <button onClick={handleWindowClose} class="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123] flex items-center justify-center cursor-pointer relative">
                                                 <span class="text-[11px] font-bold text-[#5c3e00] opacity-0 group-hover/lights:opacity-100 transition-opacity absolute pb-1.5">_</span>
                                             </button>
-                                            {/* Maximize Button */}
+                                            {/* Standard Linear Expansion Toggle */}
                                             <button onClick={() => setIsMaximized(!isMaximized)} class="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aaa2c] flex items-center justify-center cursor-pointer relative">
                                                 <span class="text-[7px] font-bold text-[#004d05] opacity-0 group-hover/lights:opacity-100 transition-opacity absolute pb-0.5">{isMaximized ? '⌥' : '⤢'}</span>
                                             </button>
@@ -240,8 +238,8 @@
                                         </div>
                                     </div>
 
-                                    {/* App Sandbox Content Frame */}
-                                    <div class="flex-1 p-6 overflow-y-auto cursor-default transition-opacity duration-300">
+                                    {/* App Layout Framework View */}
+                                    <div class="flex-1 p-6 overflow-y-auto cursor-default">
                                         {activeWindow === 'dashboard' ? (
                                             <div class="space-y-6 max-w-4xl">
                                                 <div>
@@ -278,7 +276,7 @@
                     {/* START MENU POPUP PANEL */}
                     {isStartOpen && (
                         <div 
-                            class="absolute bottom-24 left-1/2 -translate-x-1/2 md:left-8 md:translate-x-0 w-72 bg-zinc-950/95 border border-zinc-800/80 backdrop-blur-2xl rounded-2xl shadow-2xl z-50 p-4 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200"
+                            class="absolute bottom-24 left-1/2 -translate-x-1/2 md:left-8 md:translate-x-0 w-72 bg-zinc-950/95 border border-zinc-800/80 backdrop-blur-2xl rounded-2xl shadow-2xl z-50 p-4 flex flex-col overflow-hidden"
                             onClick={(e) => e.stopPropagation()}
                         >
                             <div class="px-2 pb-3 mb-2 border-b border-zinc-900 flex flex-col">
@@ -315,9 +313,9 @@
 
                     {/* SYSTEM TASKBAR DOCK */}
                     <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
-                        <div class="h-18 px-6 rounded-2xl bg-zinc-950/40 border border-zinc-800/40 backdrop-blur-xl flex items-center gap-5 shadow-2xl transition-all duration-300">
+                        <div class="h-18 px-6 rounded-2xl bg-zinc-950/40 border border-zinc-800/40 backdrop-blur-xl flex items-center gap-5 shadow-2xl">
                             
-                            {/* Start Launcher Node */}
+                            {/* System Launcher Entry Button */}
                             <button 
                                 onClick={(e) => { e.stopPropagation(); setIsStartOpen(!isStartOpen); }}
                                 class={`w-11 h-11 rounded-xl transition-all duration-300 cursor-pointer border relative group flex items-center justify-center bg-zinc-900/30 hover:bg-zinc-900/70
@@ -332,30 +330,26 @@
 
                             <span class="text-zinc-800 font-light text-xl select-none">|</span>
 
-                            {/* App Icon Set with Glow States for Minimized Elements */}
+                            {/* Active Module Mapping Interfaces */}
                             {apps.map((app) => {
                                 const AppIcon = app.icon;
                                 const isCurrentActive = activeWindow === app.id;
-                                const isCurrentHidden = isCurrentActive && isMinimized;
                                 
                                 return (
                                     <button
                                         key={app.id}
                                         onClick={(e) => { e.stopPropagation(); handleAppClick(app.id); }}
                                         class={`p-3 rounded-xl transition-all duration-300 relative cursor-pointer group transform active:scale-95
-                                            ${isCurrentActive && !isMinimized
+                                            ${isCurrentActive 
                                                 ? 'bg-zinc-100 text-zinc-950 shadow-md scale-105' 
-                                                : isCurrentHidden
-                                                ? 'text-cyan-400 border border-cyan-950/50 bg-cyan-950/10 shadow-[0_0_10px_rgba(34,211,238,0.15)] scale-100'
                                                 : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/40'
                                             }`}
                                     >
-                                        <div class={isCurrentActive && !isMinimized ? 'text-zinc-950' : 'transition-colors duration-200'}>
+                                        <div class={isCurrentActive ? 'text-zinc-950' : ''}>
                                             <AppIcon />
                                         </div>
-                                        {/* Status Dot */}
                                         <span class={`absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full transition-all duration-300
-                                            ${isCurrentActive && !isMinimized ? 'bg-zinc-950 scale-100' : isCurrentHidden ? 'bg-cyan-400 scale-100 animate-pulse' : 'bg-zinc-400 scale-0 group-hover:scale-100'}`} 
+                                            ${isCurrentActive ? 'bg-zinc-950 scale-100' : 'bg-zinc-400 scale-0 group-hover:scale-100'}`} 
                                         />
                                     </button>
                                 );
@@ -363,7 +357,7 @@
                         </div>
                     </div>
 
-                    {/* FOOTER SYSTEM STRIP */}
+                    {/* SYSTEM STATUS FOOTER SECTION */}
                     <footer class="absolute bottom-0 left-0 right-0 h-7 px-6 bg-zinc-950/10 border-t border-zinc-900/20 flex items-center justify-between text-[10px] text-zinc-500 z-40">
                         <span>Workspace: Primary</span>
                         <span>orionOS</span>
