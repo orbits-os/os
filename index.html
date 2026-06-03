@@ -110,10 +110,10 @@
             const [windowPos, setWindowPos] = React.useState({ x: 160, y: 96 });
             const [hubTab, setHubTab] = React.useState('dashboard');
 
-            // 🌟 Linked Directly to your github repository root stream
-            const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/orion-os/os/main/walpapers/";
+            // 🌟 Linked directly to your corrected GitHub repository folder name structure
+            const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/orion-os/os/main/wallpapers/";
 
-            // Active Wallpaper File Registry mapped to your GitHub repository files structure
+            // Dynamic Wallpaper file asset pointers mapped to your repository updates
             const githubWallpapers = [
                 { id: 'wall-orion', name: 'Orion Default Theme', file: 'orion.png' },
                 { id: 'wall-cosmic', name: 'Cosmic Shift', file: 'cosmic.png' },
@@ -123,7 +123,6 @@
 
             const [selectedWallpaper, setSelectedWallpaper] = React.useState(githubWallpapers[0]);
 
-            // Construct background styling using the GitHub raw asset endpoints
             const backgroundStyle = {
                 backgroundImage: `url('${GITHUB_RAW_BASE}${selectedWallpaper.file}')`,
                 backgroundSize: 'cover',
@@ -220,7 +219,6 @@
             return (
                 <div style={backgroundStyle} class="relative w-full h-screen text-zinc-100 overflow-hidden select-none">
                     
-                    {/* BACKDROP SHADOW FILTER FOR EXTRA INTERFACE LEGIBILITY */}
                     <div class="absolute inset-0 bg-black/15 z-0 pointer-events-none backdrop-brightness-[0.95]" />
 
                     {/* SYSTEM TOP BAR */}
@@ -336,7 +334,7 @@
                                                             <div>
                                                                 <div class="mb-4">
                                                                     <h3 class="text-sm font-bold text-white">GitHub Wallpaper Workspace</h3>
-                                                                    <p class="text-[11px] text-zinc-400 mt-0.5">Streaming live asset vectors from <code class="text-cyan-400 font-mono text-[10px]">orion-os/os/walpapers/</code> node pipeline.</p>
+                                                                    <p class="text-[11px] text-zinc-400 mt-0.5">Streaming live asset vectors from <code class="text-cyan-400 font-mono text-[10px]">orion-os/os/wallpapers/</code> node pipeline.</p>
                                                                 </div>
                                                                 <div class="grid grid-cols-2 gap-3">
                                                                     {githubWallpapers.map((wp) => {
@@ -357,7 +355,7 @@
                                                                                 <span class="text-xs font-medium text-zinc-300 block truncate">{wp.name}</span>
                                                                                 <span class="text-[9px] text-zinc-500 font-mono block mt-0.5 truncate">{wp.file}</span>
                                                                                 {isCurrent && (
-                                                                                    <span class="absolute top-2 right-2 text-[9px] bg-cyan-950 border border-cyan-800 text-cyan-400 font-medium px-1.5 py-0.5 rounded animate-fade-in">Active</span>
+                                                                                    <span class="absolute top-2 right-2 text-[9px] bg-cyan-950 border border-cyan-800 text-cyan-400 font-medium px-1.5 py-0.5 rounded">Active</span>
                                                                                 )}
                                                                             </button>
                                                                         );
@@ -370,7 +368,7 @@
                                                             <div class="space-y-4">
                                                                 <h3 class="text-sm font-bold text-white">System Architectures</h3>
                                                                 <div class="space-y-2 text-xs text-zinc-400">
-                                                                    <div class="flex justify-between py-1.5 border-b border-zinc-900"><span>Build Sequence Version</span><span class="font-mono text-zinc-300">v2.1.0-RAW_FLOW</span></div>
+                                                                    <div class="flex justify-between py-1.5 border-b border-zinc-900"><span>Build Sequence Version</span><span class="font-mono text-zinc-300">v2.1.0-STABLE</span></div>
                                                                     <div class="flex justify-between py-1.5 border-b border-zinc-900"><span>Display Server Layer</span><span class="text-zinc-300">GitHub Content Stream Engine</span></div>
                                                                     <div class="flex justify-between py-1.5 border-b border-zinc-900"><span>Repository Origin</span><span class="font-mono text-zinc-300 text-cyan-400">orion-os/os/main</span></div>
                                                                 </div>
@@ -380,15 +378,15 @@
                                                 </div>
                                             )}
 
-                                            {/* REAL STORAGE EXPLORER CHANNELS */}
+                                            {/* STORAGE EXPLORER CHANNELS */}
                                             {activeWindow === 'files' && (
                                                 <div class="p-6 space-y-6">
                                                     <div>
                                                         <h3 class="text-sm font-bold text-white flex items-center gap-1.5">
                                                             <svg class="w-4 h-4 text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
-                                                            GitHub Core Filesystem / walpapers /
+                                                            GitHub Core Filesystem / wallpapers /
                                                         </h3>
-                                                        <p class="text-[11px] text-zinc-400 mt-0.5">Linked directory layout. Click any file configuration item inside the cloud frame below to switch theme configuration immediately.</p>
+                                                        <p class="text-[11px] text-zinc-400 mt-0.5">Linked repository directory setup. Click any file payload below to initialize deployment layout sequences immediately.</p>
                                                     </div>
 
                                                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -424,7 +422,7 @@
                                             {activeWindow === 'library' && (
                                                 <div class="h-full flex flex-col items-center justify-center text-center py-12">
                                                     <h3 class="text-xs font-semibold text-zinc-300 capitalize">Media Deck Frame Sandbox</h3>
-                                                    <p class="text-[11px] text-zinc-500 max-w-xs mt-1">Primary secure pipeline frame securely initialized onto active user desk workspace stack configuration.</p>
+                                                    <p class="text-[11px] text-zinc-500 max-w-xs mt-1">Module frame securely initialized onto active user workspace layer pipeline.</p>
                                                 </div>
                                             )}
 
@@ -437,7 +435,7 @@
 
                     {/* START LAUNCH DRAWER MENU */}
                     {isStartOpen && (
-                        <div class="absolute bottom-24 left-1/2 -translate-x-1/2 md:left-8 md:translate-x-0 w-72 bg-zinc-950/95 border border-zinc-800/80 backdrop-blur-2xl rounded-2xl shadow-2xl z-50 p-4 flex flex-col overflow-hidden animate-fade-in" onClick={(e) => e.stopPropagation()}>
+                        <div class="absolute bottom-24 left-1/2 -translate-x-1/2 md:left-8 md:translate-x-0 w-72 bg-zinc-950/95 border border-zinc-800/80 backdrop-blur-2xl rounded-2xl shadow-2xl z-50 p-4 flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
                             <div class="px-2 pb-3 mb-2 border-b border-zinc-900 flex flex-col">
                                 <span class="text-xs font-semibold text-zinc-200">orionOS Environment</span>
                                 <span class="text-[10px] text-zinc-500 mt-0.5">Local User Host Node</span>
@@ -465,11 +463,9 @@
                     <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
                         <div class="h-18 px-6 rounded-2xl bg-zinc-950/40 border border-zinc-800/40 backdrop-blur-xl flex items-center gap-5 shadow-2xl">
                             
-                            {/* App Launcher Trigger */}
                             <button onClick={(e) => { e.stopPropagation(); setIsStartOpen(!isStartOpen); }} class={`w-11 h-11 rounded-xl transition-all duration-300 cursor-pointer border relative group flex items-center justify-center bg-zinc-900/30 hover:bg-zinc-900/70 ${isStartOpen ? 'border-cyan-400 scale-105 shadow-[0_0_12px_rgba(34,211,238,0.25)] bg-zinc-900/90' : 'border-zinc-800/80 hover:border-zinc-500'}`}><OrbitIcon /><span class={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-cyan-400 transition-all duration-300 ${isStartOpen ? 'scale-100' : 'scale-0'}`} /></button>
                             <span class="text-zinc-800 font-light text-xl select-none">|</span>
 
-                            {/* Main App Icons */}
                             {apps.map((app) => {
                                 const AppIcon = app.icon;
                                 const isCurrentActive = activeWindow === app.id;
@@ -490,7 +486,6 @@
                         </div>
                     </div>
 
-                    {/* FOOTER METRICS BAR */}
                     <footer class="absolute bottom-0 left-0 right-0 h-7 px-6 bg-zinc-950/10 border-t border-zinc-900/20 flex items-center justify-between text-[10px] text-zinc-500 z-40"><span>Workspace Pipeline: Core</span><span>orionOS Node Alpha</span></footer>
                 </div>
             );
