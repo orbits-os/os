@@ -102,10 +102,11 @@
         }
 
         function OrbitOS() {
-            // Static setup registries
-            const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/orbit-os/os/main/wallpapers/";
+            // Core Repository Source Location pointing directly to the orbits-os assets tree
+            const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/orbits-os/os/main/wallpapers/";
+            
             const githubWallpapers = [
-                { id: 'wall-orbit', name: 'Orbit Default', file: 'orbit.png', type: 'image' },
+                { id: 'wall-orbit', name: 'Orbit Default', file: 'orion.png', type: 'image' },
                 { id: 'wall-king', name: 'King Canvas', file: 'king.PNG', type: 'image' },
                 { id: 'wall-gojo', name: 'Gojo Motion Arena', file: 'Gojo.mp4', type: 'video' },
                 { id: 'wall-fox', name: 'Snow Fox Live', file: 'SnowFox.mp4', type: 'video' },
@@ -118,11 +119,11 @@
                 { id: 'files', label: 'Storage', icon: StorageIcon, defaultX: 32, defaultY: 280 },
             ];
 
-            // Core State hooks integrated with localStorage engines
+            // Core States + LocalStorage Persistence Syncing
             const [time, setTime] = React.useState('');
             const [fps, setFps] = React.useState(60);
             
-            // Removed startup app presentation (Set directly to null instead of 'hub')
+            // Starts clean (null) instead of launching an app on startup
             const [activeWindow, setActiveWindow] = React.useState(() => {
                 return localStorage.getItem('orbitOS_activeWindow') || null;
             });
@@ -146,7 +147,6 @@
             const [isStartOpen, setIsStartOpen] = React.useState(false);
             const [windowPos, setWindowPos] = React.useState({ x: 160, y: 96 });
 
-            // Sync state shifts to LocalStorage
             React.useEffect(() => {
                 if (activeWindow) {
                     localStorage.setItem('orbitOS_activeWindow', activeWindow);
@@ -163,7 +163,6 @@
                 localStorage.setItem('orbitOS_selectedWallpaper', selectedWallpaper.id);
             }, [selectedWallpaper]);
 
-            // Safely encode URLs to handle spaces or special characters correctly
             const activeAssetUrl = `${GITHUB_RAW_BASE}${encodeURIComponent(selectedWallpaper.file)}`;
 
             React.useEffect(() => {
@@ -336,7 +335,7 @@
                                             <div class="flex items-center gap-2 group/lights z-10">
                                                 <button onClick={handleWindowClose} class="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e] flex items-center justify-center cursor-pointer relative"><span class="text-[9px] font-bold text-[#4c0002] opacity-0 group-hover/lights:opacity-100 transition-opacity absolute pb-0.5">✕</span></button>
                                                 <button onClick={handleWindowMinimize} class="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123] flex items-center justify-center cursor-pointer relative"><span class="text-[11px] font-bold text-[#5c3e00] opacity-0 group-hover/lights:opacity-100 transition-opacity absolute pb-1.5">_</span></button>
-                                                <button onClick={() => setIsMaximized(!isMaximized)} class="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aaa2c] flex items-center justify-center cursor-pointer relative"><span class="text-[7px] font-bold text-[#004d05] opacity-0 group-hover/lights:opacity-100 transition-opacity absolute pb-0.5">{isMaximized ? '⌥' : '⤢'}</span></button>
+                                                <button onClick={() => ExtendsisMaximized(!isMaximized)} class="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aaa2c] flex items-center justify-center cursor-pointer relative"><span class="text-[7px] font-bold text-[#004d05] opacity-0 group-hover/lights:opacity-100 transition-opacity absolute pb-0.5">{isMaximized ? '⌥' : '⤢'}</span></button>
                                             </div>
                                             <div class="absolute inset-x-0 text-center pointer-events-none">
                                                 <span class="text-xs font-semibold tracking-wide text-zinc-400 capitalize">{activeWindow === 'hub' ? 'System Hub' : 'Storage Explorer'}</span>
@@ -426,7 +425,7 @@
                                                                 <div class="space-y-2 text-xs text-zinc-400">
                                                                     <div class="flex justify-between py-1.5 border-b border-zinc-900"><span>Build Patch Version</span><span class="font-mono text-zinc-300">v2.4.5-STABLE</span></div>
                                                                     <div class="flex justify-between py-1.5 border-b border-zinc-900"><span>Media Renderer Pipeline</span><span class="text-zinc-300">HTML5 Hybrid Dynamic Frame Deck</span></div>
-                                                                    <div class="flex justify-between py-1.5 border-b border-zinc-900"><span>Repository Link Origin</span><span class="font-mono text-cyan-400">orbit-os/os/wallpapers/</span></div>
+                                                                    <div class="flex justify-between py-1.5 border-b border-zinc-900"><span>Repository Link Origin</span><span class="font-mono text-cyan-400">orbits-os/os/wallpapers/</span></div>
                                                                 </div>
                                                             </div>
                                                         )}
