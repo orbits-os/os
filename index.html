@@ -102,20 +102,8 @@
         }
 
         function OrbitOS() {
-            const [time, setTime] = React.useState('');
-            const [fps, setFps] = React.useState(60);
-            const [activeWindow, setActiveWindow] = React.useState('hub');
-            const [isMaximized, setIsMaximized] = React.useState(false);
-            const [isVisible, setIsVisible] = React.useState(true);
-            const [isAnimating, setIsAnimating] = React.useState(false);
-            const [isStartOpen, setIsStartOpen] = React.useState(false);
-            const [windowPos, setWindowPos] = React.useState({ x: 160, y: 96 });
-            const [hubTab, setHubTab] = React.useState('dashboard');
-
-            // GitHub Base Endpoint URL Configuration
+            // Static setup registries
             const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/orbit-os/os/main/wallpapers/";
-
-            // Updated Registry with exact case-sensitive names and extensions
             const githubWallpapers = [
                 { id: 'wall-orbit', name: 'Orbit Default', file: 'orbit.png', type: 'image' },
                 { id: 'wall-king', name: 'King Canvas', file: 'king.PNG', type: 'image' },
@@ -124,7 +112,56 @@
                 { id: 'wall-sukuna', name: 'Sukuna Fire Unleashed', file: 'sukuna-fire.mp4', type: 'video' }
             ];
 
-            const [selectedWallpaper, setSelectedWallpaper] = React.useState(githubWallpapers[0]);
+            const apps = [
+                { id: 'hub', label: 'System Hub', icon: HubIcon, defaultX: 32, defaultY: 80 },
+                { id: 'library', label: 'Media Deck', icon: MediaIcon, defaultX: 32, defaultY: 180 },
+                { id: 'files', label: 'Storage', icon: StorageIcon, defaultX: 32, defaultY: 280 },
+            ];
+
+            // Core State hooks integrated with localStorage engines
+            const [time, setTime] = React.useState('');
+            const [fps, setFps] = React.useState(60);
+            
+            // Removed startup app presentation (Set directly to null instead of 'hub')
+            const [activeWindow, setActiveWindow] = React.useState(() => {
+                return localStorage.getItem('orbitOS_activeWindow') || null;
+            });
+            
+            const [hubTab, setHubTab] = React.useState(() => {
+                return localStorage.getItem('orbitOS_hubTab') || 'dashboard';
+            });
+
+            const [selectedWallpaper, setSelectedWallpaper] = React.useState(() => {
+                const savedWp = localStorage.getItem('orbitOS_selectedWallpaper');
+                if (savedWp) {
+                    const parsed = githubWallpapers.find(w => w.id === savedWp);
+                    if (parsed) return parsed;
+                }
+                return githubWallpapers[0];
+            });
+
+            const [isMaximized, setIsMaximized] = React.useState(false);
+            const [isVisible, setIsVisible] = React.useState(activeWindow !== null);
+            const [isAnimating, setIsAnimating] = React.useState(false);
+            const [isStartOpen, setIsStartOpen] = React.useState(false);
+            const [windowPos, setWindowPos] = React.useState({ x: 160, y: 96 });
+
+            // Sync state shifts to LocalStorage
+            React.useEffect(() => {
+                if (activeWindow) {
+                    localStorage.setItem('orbitOS_activeWindow', activeWindow);
+                } else {
+                    localStorage.removeItem('orbitOS_activeWindow');
+                }
+            }, [activeWindow]);
+
+            React.useEffect(() => {
+                localStorage.setItem('orbitOS_hubTab', hubTab);
+            }, [hubTab]);
+
+            React.useEffect(() => {
+                localStorage.setItem('orbitOS_selectedWallpaper', selectedWallpaper.id);
+            }, [selectedWallpaper]);
 
             // Safely encode URLs to handle spaces or special characters correctly
             const activeAssetUrl = `${GITHUB_RAW_BASE}${encodeURIComponent(selectedWallpaper.file)}`;
@@ -157,12 +194,6 @@
                 animationId = requestAnimationFrame(calcFps);
                 return () => cancelAnimationFrame(animationId);
             }, []);
-
-            const apps = [
-                { id: 'hub', label: 'System Hub', icon: HubIcon, defaultX: 32, defaultY: 80 },
-                { id: 'library', label: 'Media Deck', icon: MediaIcon, defaultX: 32, defaultY: 180 },
-                { id: 'files', label: 'Storage', icon: StorageIcon, defaultX: 32, defaultY: 280 },
-            ];
 
             const handleWindowClose = () => {
                 if (isAnimating) return;
@@ -243,7 +274,6 @@
                     {/* SYSTEM TOP BAR WITH LOGO REPLACING TEXT */}
                     <header class="absolute top-0 left-0 right-0 h-10 z-50 flex items-center justify-between px-5 bg-zinc-950/40 border-b border-zinc-800/20 backdrop-blur-md text-xs font-medium text-zinc-400">
                         <div class="flex items-center gap-4">
-                            {/* SVG Logo component used exclusively as the top website branding */}
                             <div class="flex items-center text-white cursor-pointer hover:opacity-80 transition-opacity">
                                 <OrbitIcon className="w-5 h-5" />
                             </div>
