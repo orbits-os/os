@@ -102,7 +102,6 @@
         }
 
         function OrbitOS() {
-            // Core Repository Source Location pointing directly to the orbits-os assets tree
             const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/orbits-os/os/main/wallpapers/";
             
             const githubWallpapers = [
@@ -115,15 +114,12 @@
 
             const apps = [
                 { id: 'hub', label: 'System Hub', icon: HubIcon, defaultX: 32, defaultY: 80 },
-                { id: 'library', label: 'Media Deck', icon: MediaIcon, defaultX: 32, defaultY: 180 },
-                { id: 'files', label: 'Storage', icon: StorageIcon, defaultX: 32, defaultY: 280 },
+                { id: 'files', label: 'Storage', icon: StorageIcon, defaultX: 32, defaultY: 180 },
             ];
 
-            // Core States + LocalStorage Persistence Syncing
             const [time, setTime] = React.useState('');
             const [fps, setFps] = React.useState(60);
             
-            // Starts clean (null) instead of launching an app on startup
             const [activeWindow, setActiveWindow] = React.useState(() => {
                 return localStorage.getItem('orbitOS_activeWindow') || null;
             });
@@ -142,7 +138,7 @@
             });
 
             const [isMaximized, setIsMaximized] = React.useState(false);
-            const [isVisible, setIsVisible] = React.useState(activeWindow !== null);
+            const [isVisible, setIsVisible] = React.useState(localStorage.getItem('orbitOS_activeWindow') !== null);
             const [isAnimating, setIsAnimating] = React.useState(false);
             const [isStartOpen, setIsStartOpen] = React.useState(false);
             const [windowPos, setWindowPos] = React.useState({ x: 160, y: 96 });
@@ -220,13 +216,13 @@
                 if (isAnimating) return;
                 if (explicitTab) setHubTab(explicitTab);
 
-                if (activeWindow === appId && !explicitTab) {
+                if (activeWindow === appId) {
                     setIsAnimating(true);
                     setIsVisible(!isVisible);
                     setTimeout(() => setIsAnimating(false), 300);
                 } else {
                     setIsAnimating(true);
-                    if (isVisible && activeWindow !== appId) {
+                    if (isVisible) {
                         setIsVisible(false);
                         setTimeout(() => {
                             setActiveWindow(appId);
@@ -236,7 +232,7 @@
                         }, 200);
                     } else {
                         setActiveWindow(appId);
-                        if (activeWindow === appId) setIsVisible(true);
+                        setIsVisible(true);
                         setIsMaximized(false);
                         setTimeout(() => setIsAnimating(false), 300);
                     }
@@ -247,7 +243,7 @@
             return (
                 <div class="relative w-full h-screen text-zinc-100 overflow-hidden select-none bg-[#09090b]">
                     
-                    {/* WALLPAPER ENGINE BACKGROUND PIPELINE RENDERER */}
+                    {/* WALLPAPER ENGINE BACKGROUND */}
                     <div class="absolute inset-0 w-full h-full z-0 pointer-events-none transition-all duration-700">
                         {selectedWallpaper.type === 'video' ? (
                             <video 
@@ -267,10 +263,9 @@
                         )}
                     </div>
 
-                    {/* INTERFACE RENDERING OVERLAYS FOR OPTIMIZED CONTRAST */}
                     <div class="absolute inset-0 bg-black/20 z-0 pointer-events-none backdrop-brightness-[0.92]" />
 
-                    {/* SYSTEM TOP BAR WITH LOGO REPLACING TEXT */}
+                    {/* TOP BAR */}
                     <header class="absolute top-0 left-0 right-0 h-10 z-50 flex items-center justify-between px-5 bg-zinc-950/40 border-b border-zinc-800/20 backdrop-blur-md text-xs font-medium text-zinc-400">
                         <div class="flex items-center gap-4">
                             <div class="flex items-center text-white cursor-pointer hover:opacity-80 transition-opacity">
@@ -287,10 +282,10 @@
                         </div>
                     </header>
 
-                    {/* DESKTOP DESK WORKSPACE */}
+                    {/* DESKTOP Workspace */}
                     <main class="relative w-full h-full z-10" onClick={() => setIsStartOpen(false)}>
                         
-                        {/* ICON SHORTCUT MAP LOOP */}
+                        {/* SHORTCUTS */}
                         {apps.map((app) => {
                             const AppIcon = app.icon;
                             const isOpen = activeWindow === app.id && isVisible;
@@ -304,7 +299,7 @@
                                             ${isOpen ? 'bg-zinc-900/80 border-zinc-700/60 scale-105 shadow-cyan-950/20' : ''}`}>
                                             <AppIcon />
                                             {activeWindow === app.id && (
-                                                <span class={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-zinc-400 transition-all duration-300 ${isVisible ? 'bg-zinc-100' : 'bg-zinc-500'}`} />
+                                                <span class={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full transition-all duration-300 ${isVisible ? 'bg-zinc-100' : 'bg-zinc-500'}`} />
                                             )}
                                         </div>
                                         <span class="text-[10px] mt-2 text-zinc-300 group-hover:text-zinc-100 font-medium drop-shadow-md truncate w-full px-1 pointer-events-none">
@@ -315,7 +310,7 @@
                             );
                         })}
 
-                        {/* WINDOW SECTIONS */}
+                        {/* WINDOW COMPONENT */}
                         {activeWindow && (
                             <div class={`w-full h-full absolute inset-0 z-30 ${isVisible ? "" : "pointer-events-none"}`}>
                                 <Draggable pos={windowPos} setPos={setWindowPos} handleClass="window-drag-bar" disabled={isMaximized}>
@@ -330,25 +325,24 @@
                                             ${isVisible ? 'opacity-100 scale-100 blur-none' : 'opacity-0 scale-95 blur-sm'}`}
                                         onClick={(e) => e.stopPropagation()}
                                     >
-                                        {/* Drag Bar Frame */}
+                                        {/* Frame Drag bar */}
                                         <div class="window-drag-bar h-12 bg-zinc-900/40 border-b border-zinc-800/30 flex items-center px-5 cursor-grab active:cursor-grabbing select-none relative shrink-0">
                                             <div class="flex items-center gap-2 group/lights z-10">
                                                 <button onClick={handleWindowClose} class="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e] flex items-center justify-center cursor-pointer relative"><span class="text-[9px] font-bold text-[#4c0002] opacity-0 group-hover/lights:opacity-100 transition-opacity absolute pb-0.5">✕</span></button>
                                                 <button onClick={handleWindowMinimize} class="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123] flex items-center justify-center cursor-pointer relative"><span class="text-[11px] font-bold text-[#5c3e00] opacity-0 group-hover/lights:opacity-100 transition-opacity absolute pb-1.5">_</span></button>
-                                                <button onClick={() => ExtendsisMaximized(!isMaximized)} class="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aaa2c] flex items-center justify-center cursor-pointer relative"><span class="text-[7px] font-bold text-[#004d05] opacity-0 group-hover/lights:opacity-100 transition-opacity absolute pb-0.5">{isMaximized ? '⌥' : '⤢'}</span></button>
+                                                <button onClick={() => setIsMaximized(!isMaximized)} class="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aaa2c] flex items-center justify-center cursor-pointer relative"><span class="text-[7px] font-bold text-[#004d05] opacity-0 group-hover/lights:opacity-100 transition-opacity absolute pb-0.5">{isMaximized ? '⌥' : '⤢'}</span></button>
                                             </div>
                                             <div class="absolute inset-x-0 text-center pointer-events-none">
                                                 <span class="text-xs font-semibold tracking-wide text-zinc-400 capitalize">{activeWindow === 'hub' ? 'System Hub' : 'Storage Explorer'}</span>
                                             </div>
                                         </div>
 
-                                        {/* Content View Frame */}
+                                        {/* Viewport Frame */}
                                         <div class="flex-1 overflow-y-auto cursor-default">
                                             
-                                            {/* SYSTEM HUB ROUTER CONTENT */}
+                                            {/* SYSTEM HUB */}
                                             {activeWindow === 'hub' && (
                                                 <div class="flex h-full min-h-[320px]">
-                                                    {/* Side Navigation Panels */}
                                                     <div class="w-44 border-r border-zinc-800/40 bg-zinc-900/20 p-3 space-y-1 shrink-0 select-none">
                                                         <div class="text-[9px] font-bold text-zinc-600 px-3 uppercase tracking-wider mb-1">Status Environment</div>
                                                         <button onClick={() => setHubTab('dashboard')} class={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer transition-colors ${hubTab === 'dashboard' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-zinc-200'}`}>Dashboard Metrics</button>
@@ -358,7 +352,6 @@
                                                         <button onClick={() => setHubTab('system')} class={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer transition-colors ${hubTab === 'system' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-zinc-200'}`}>System Properties</button>
                                                     </div>
 
-                                                    {/* Core Controller Content Viewport */}
                                                     <div class="flex-1 p-6 overflow-y-auto">
                                                         {hubTab === 'dashboard' && (
                                                             <div class="space-y-6">
@@ -433,7 +426,7 @@
                                                 </div>
                                             )}
 
-                                            {/* FILES INTERFACE STORAGE CHANNELS */}
+                                            {/* STORAGE FILESYSTEM */}
                                             {activeWindow === 'files' && (
                                                 <div class="p-6 space-y-6">
                                                     <div>
@@ -441,46 +434,21 @@
                                                             <svg class="w-4 h-4 text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
                                                             GitHub Core Filesystem / wallpapers /
                                                         </h3>
-                                                        <p class="text-[11px] text-zinc-400 mt-0.5">Detected repository payloads. Click any block item below to trigger deployment onto active desktop render canvas.</p>
+                                                        <p class="text-[11px] text-zinc-400 mt-0.5">Detected repository assets. Select an item inside the Hub configuration workspace to deploy.</p>
                                                     </div>
-
-                                                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                                        {githubWallpapers.map((wp) => {
-                                                            const isApplied = wp.id === selectedWallpaper.id;
-                                                            const fileRawUrl = `${GITHUB_RAW_BASE}${encodeURIComponent(wp.file)}`;
-                                                            return (
-                                                                <div 
-                                                                    key={wp.id} 
-                                                                    onClick={() => { handleAppClick('hub', 'wallpaper'); }}
-                                                                    class={`p-2.5 rounded-xl bg-zinc-900/30 border transition-all text-center cursor-pointer group relative
-                                                                        ${isApplied ? 'border-cyan-500 bg-zinc-900/60' : 'border-zinc-800/60 hover:border-zinc-700'}`}
-                                                                >
-                                                                    <div class="h-16 w-full rounded-lg mb-2 relative bg-zinc-950 border border-zinc-900/40 flex items-center justify-center overflow-hidden">
-                                                                        {wp.type === 'video' ? (
-                                                                            <video src={fileRawUrl} muted class="w-full h-full object-cover" />
-                                                                        ) : (
-                                                                            <div style={{ backgroundImage: `url('${fileRawUrl}')` }} class="w-full h-full bg-cover bg-center" />
-                                                                        )}
-                                                                        <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                                            <span class="text-[10px] font-semibold text-white bg-zinc-900/90 px-2 py-1 rounded border border-zinc-700 shadow-md">
-                                                                                {isApplied ? 'Active' : 'Deploy'}
-                                                                            </span>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="text-[11px] font-medium text-zinc-300 truncate">{wp.file}</div>
-                                                                    <div class="text-[9px] text-zinc-500 font-mono mt-0.5 capitalize">{wp.type} Link</div>
+                                                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                                        {githubWallpapers.map((file) => (
+                                                            <div key={file.id} class="p-4 bg-zinc-900/20 border border-zinc-800/60 rounded-xl flex items-center gap-3">
+                                                                <div class="p-2 bg-zinc-950 rounded-lg text-zinc-400">
+                                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"/></svg>
                                                                 </div>
-                                                            );
-                                                        })}
+                                                                <div class="truncate">
+                                                                    <span class="text-xs font-medium text-zinc-300 block truncate">{file.name}</span>
+                                                                    <span class="text-[10px] font-mono text-zinc-500 block truncate">{file.file}</span>
+                                                                </div>
+                                                            </div>
+                                                        ))}
                                                     </div>
-                                                </div>
-                                            )}
-
-                                            {/* MEDIA DECK SANDBOX PREVIEW */}
-                                            {activeWindow === 'library' && (
-                                                <div class="h-full flex flex-col items-center justify-center text-center py-12">
-                                                    <h3 class="text-xs font-semibold text-zinc-300 capitalize">Media Deck Frame Sandbox</h3>
-                                                    <p class="text-[11px] text-zinc-500 max-w-xs mt-1">Primary safe media playback sandbox securely mounted inside space layout environments.</p>
                                                 </div>
                                             )}
 
@@ -490,66 +458,12 @@
                             </div>
                         )}
                     </main>
-
-                    {/* START DRAWER APPLICATIONS MENU */}
-                    {isStartOpen && (
-                        <div class="absolute bottom-24 left-1/2 -translate-x-1/2 md:left-8 md:translate-x-0 w-72 bg-zinc-950/95 border border-zinc-800/80 backdrop-blur-2xl rounded-2xl shadow-2xl z-50 p-4 flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
-                            <div class="px-2 pb-3 mb-2 border-b border-zinc-900 flex flex-col">
-                                <span class="text-xs font-semibold text-zinc-200">orbitOS System</span>
-                                <span class="text-[10px] text-zinc-500 mt-0.5">Local Workspace Node</span>
-                            </div>
-                            <div class="flex-1 space-y-1">
-                                <div class="text-[9px] font-bold text-zinc-600 px-2 uppercase tracking-wider mb-1">Applications</div>
-                                {apps.map((app) => {
-                                    const AppIcon = app.icon;
-                                    return (
-                                        <button key={app.id} onClick={() => handleAppClick(app.id)} class="w-full flex items-center gap-3 px-2.5 py-2 rounded-xl text-xs text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900/60 transition-colors text-left cursor-pointer">
-                                            <div class="text-zinc-500 group-hover:text-zinc-300"><AppIcon /></div>
-                                            <span class="font-medium">{app.label}</span>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                            <div class="mt-4 pt-2 border-t border-zinc-900 flex items-center justify-between px-2 text-[11px] text-zinc-500">
-                                <span class="text-[10px]">v2.4.5-Stable</span>
-                                <button onClick={() => { setIsStartOpen(false); setIsVisible(false); }} class="flex items-center gap-1.5 hover:text-rose-400 transition-colors cursor-pointer"><PowerIcon /><span>Log Out</span></button>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* INTERACTIVE SYSTEM TASKBAR DOCK */}
-                    <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
-                        <div class="h-18 px-6 rounded-2xl bg-zinc-950/40 border border-zinc-800/40 backdrop-blur-xl flex items-center gap-5 shadow-2xl">
-                            
-                            <button onClick={(e) => { e.stopPropagation(); setIsStartOpen(!isStartOpen); }} class={`w-11 h-11 rounded-xl transition-all duration-300 cursor-pointer border relative group flex items-center justify-center bg-zinc-900/30 hover:bg-zinc-900/70 ${isStartOpen ? 'border-cyan-400 scale-105 shadow-[0_0_12px_rgba(34,211,238,0.25)] bg-zinc-900/90' : 'border-zinc-800/80 hover:border-zinc-500'}`}><OrbitIcon /><span class={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-cyan-400 transition-all duration-300 ${isStartOpen ? 'scale-100' : 'scale-0'}`} /></button>
-                            <span class="text-zinc-800 font-light text-xl select-none">|</span>
-
-                            {apps.map((app) => {
-                                const AppIcon = app.icon;
-                                const isCurrentActive = activeWindow === app.id;
-                                const isCurrentOpen = isCurrentActive && isVisible;
-                                return (
-                                    <button
-                                        key={app.id}
-                                        onClick={(e) => { e.stopPropagation(); handleAppClick(app.id); }}
-                                        class={`p-3 rounded-xl transition-all duration-300 relative cursor-pointer group transform active:scale-95
-                                            ${isCurrentOpen ? 'bg-zinc-100 text-zinc-950 shadow-md scale-105' : isCurrentActive ? 'text-zinc-400 border border-zinc-800/50 bg-zinc-900/40 shadow-inner scale-100' : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/40'}`}
-                                    >
-                                        <div class={isCurrentOpen ? 'text-zinc-950' : ''}><AppIcon /></div>
-                                        <span class={`absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full transition-all duration-300
-                                            ${isCurrentOpen ? 'bg-zinc-950 scale-100' : isCurrentActive ? 'bg-zinc-500 scale-100' : 'bg-cyan-400 scale-0 group-hover:scale-100'}`} />
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    <footer class="absolute bottom-0 left-0 right-0 h-7 px-6 bg-zinc-950/10 border-t border-zinc-900/20 flex items-center justify-between text-[10px] text-zinc-500 z-40"><span>Workspace Pipeline: Core</span><span>orbitOS Node Alpha</span></footer>
                 </div>
             );
         }
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
+        const container = document.getElementById('root');
+        const root = ReactDOM.createRoot(container);
         root.render(<OrbitOS />);
     </script>
 </body>
